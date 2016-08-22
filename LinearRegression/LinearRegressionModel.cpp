@@ -32,8 +32,10 @@ void LinearRegressionModel<T>::train(const std::vector<T> &x,
         // update theta
         theta0_ = theta0_ - alpha*(sum0/m);
         theta1_ = theta1_ - alpha*(sum1/m);
-        std::cout << "Iteration " << (i+1) << ": y = ";
-        std::cout << theta1_ << " * x + " << theta0_ << std::endl;
+        if ((i+1) % 100 == 0) {
+            std::cout << "Iteration " << (i+1) << ": y = ";
+            std::cout << theta1_ << " * x + " << theta0_ << std::endl;
+        }
     }
 }
 

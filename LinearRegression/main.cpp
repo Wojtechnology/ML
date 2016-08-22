@@ -9,16 +9,24 @@ int main()
 
     int m;
     float newX, newY;
+    std::cout << "m: ";
     std::cin >> m;
 
-    for (int i = 0; i < m; ++i) {
+    for (float i = 0; i < m; ++i) {
         std::cin >> newX >> newY;
         x.push_back(newX);
         y.push_back(newY);
     }
 
+    float alpha;
+    int iterations;
+    std::cout << "alpha: ";
+    std::cin >> alpha;
+    std::cout << "iterations: ";
+    std::cin >> iterations;
+
     LinearRegressionModel<float> model;
-    model.train(x, y, 0.01);
+    model.train(x, y, alpha, iterations);
 
     float query;
     while (std::cin >> query) {
