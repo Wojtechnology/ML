@@ -41,11 +41,10 @@ void MultivariateLinearRegressionModel::train(const Eigen::MatrixXf &x,
     trainingData << ones, x;
 
     for (unsigned int i = 0; i < iterations; ++i) {
-        Eigen::VectorXf der = trainingData.transpose() * (trainingData * theta_ - y);
-        theta_ -= (alpha*der) / m;
+        theta_ -= alpha*((trainingData * theta_ - y).transpose() * trainingData).transpose() / m;
         if ((i+1) % 100 == 0) {
-            std::cout << "Iteration " << (i+1) << " ϴ = [";
-            std::cout << theta_.transpose() << "  ]\n";
+            std::cout << "Iteration " << (i+1) << ": ϴ = [";
+            std::cout << theta_.transpose() << "]\n";
         }
     }
 }
