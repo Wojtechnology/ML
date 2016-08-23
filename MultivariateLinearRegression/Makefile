@@ -1,6 +1,6 @@
 CXX=g++
-OBJECTS = LinearRegressionModel.o main.o
-EXEC=linreg
+OBJECTS = MultivariateLinearRegressionModel.o main.o
+EXEC=mlinreg
 
 $(EXEC): $(OBJECTS)
 	       	$(CXX) -o $(EXEC) $(OBJECTS)

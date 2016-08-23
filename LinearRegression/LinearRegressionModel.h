@@ -7,7 +7,7 @@
 template <typename T = float>
 class LinearRegressionModel {
 public:
-    LinearRegressionModel(float theta0 = 0, float theta1 = 0);
+    explicit LinearRegressionModel(float theta0 = 0, float theta1 = 0);
     void train(const std::vector<T> &x,
                const std::vector<T> &y,
                float alpha = 1,
