@@ -27,7 +27,6 @@ int main(int argc, char **argv)
     Eigen::MatrixXf x(m,n);
     Eigen::VectorXf y(m);
 
-    std::cout << std::endl;
     float placeholder;
 
     for (int i = 0; i < m; ++i) {
@@ -84,7 +83,6 @@ int main(int argc, char **argv)
             }
             prediction = model.predict(query);
             if (std::abs(res - prediction) <= errorMargin) ++correct;
-            std::cout << res << " - " << prediction << " = " << res - prediction << std::endl;
         }
 
         std::cout << correct << " out of " << numTests << " correct" << std::endl;
