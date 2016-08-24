@@ -76,6 +76,7 @@ Eigen::MatrixXf MultivariateLinearRegressionModel::normalizeTrainingData(
     assert(x.cols() == n_);
     for (int i = 0; i < n_; ++i) {
         means_(i) = x.col(i).mean();
+        // TODO: Change to using stdev
         range_(i) = x.col(i).maxCoeff() - x.col(i).minCoeff();
     }
     return (x.transpose() - means_.replicate(1, x.rows())).cwiseQuotient(range_.replicate(1, x.rows())).transpose();
