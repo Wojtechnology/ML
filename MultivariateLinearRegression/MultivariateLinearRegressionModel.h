@@ -18,6 +18,11 @@ private:
     int n_; // number of features
 
     bool normalize_;
+    Eigen::VectorXf means_; // means for normalization
+    Eigen::VectorXf range_; // ranges for normalization
+
+    Eigen::MatrixXf normalizeTrainingData(const Eigen::MatrixXf &x);
+    Eigen::VectorXf normalizeDataPoint(const Eigen::VectorXf &x) const;
 };
 
 #endif
