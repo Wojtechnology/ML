@@ -1,16 +1,9 @@
 #include <cassert>
 #include <iostream>
 
-#include "MultivariateLinearRegressionModel.h"
+#include "MLinearRegressionModel.h"
 
 #define ITERATION_PRINT_FREQUENCY 100
-
-// initialize theta
-MultivariateLinearRegressionModel::MultivariateLinearRegressionModel(unsigned int n,
-                                                                     bool normalize) :
-    theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalize_(normalize), means_(n), range_(n)
-{
-}
 
 // train the model using given training data
 //
@@ -26,7 +19,7 @@ MultivariateLinearRegressionModel::MultivariateLinearRegressionModel(unsigned in
 //  ....
 //   ym ]
 //
-void MultivariateLinearRegressionModel::train(const Eigen::MatrixXf &x,
+void MLinearRegressionModel::train(const Eigen::MatrixXf &x,
                                               const Eigen::VectorXf &y,
                                               float alpha,
                                               unsigned int iterations)
@@ -60,32 +53,11 @@ void MultivariateLinearRegressionModel::train(const Eigen::MatrixXf &x,
 //   ...
 //   x_n ]
 //
-float MultivariateLinearRegressionModel::predict(const Eigen::VectorXf &x) const
+float MLinearRegressionModel::predict(const Eigen::VectorXf &x) const
 {
     assert(x.rows() == n_);
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
     query << 1, (normalize_ ? normalizeDataPoint(x) : x).transpose();
     return query * theta_;
-}
-
-// normalizes training set and sets the mean and standard deviation vectors
-Eigen::MatrixXf MultivariateLinearRegressionModel::normalizeTrainingData(
-        const Eigen::MatrixXf &x)
-{
-    assert(x.cols() == n_);
-    for (int i = 0; i < n_; ++i) {
-        means_(i) = x.col(i).mean();
-        // TODO: Change to using stdev
-        range_(i) = x.col(i).maxCoeff() - x.col(i).minCoeff();
-    }
-    return (x.transpose() - means_.replicate(1, x.rows())).cwiseQuotient(range_.replicate(1, x.rows())).transpose();
-}
-
-// normalizes a data point with previous mean and range
-Eigen::VectorXf MultivariateLinearRegressionModel::normalizeDataPoint(
-        const Eigen::VectorXf &x) const
-{
-    assert(x.rows() == n_);
-    return (x - means_).cwiseQuotient(range_);
 }

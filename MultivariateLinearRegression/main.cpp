@@ -4,7 +4,7 @@
 
 #include <Eigen/Dense>
 
-#include "MultivariateLinearRegressionModel.h"
+#include "MLinearRegressionModel.h"
 
 #define TRAIN_PRINT_FREQUENCY 100000000
 #define TEST_PRINT_FREQUENCY 100000000
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
         }
     }
 
-    MultivariateLinearRegressionModel model(n, normalize);
+    MLinearRegressionModel model(n, normalize);
 
     float alpha;
     unsigned int iterations;
