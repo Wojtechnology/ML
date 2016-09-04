@@ -30,3 +30,6 @@
 
 # Vim
 *.swp
+
+# Valgrind
+*.dSYM
