@@ -1,11 +1,18 @@
 CXX=g++
-OBJECTS = LinearRegressionModel.o main.o
+OBJECTS = LinearRegressionModel.o LinMain.o
 EXEC=linreg
+MOBJECTS = MLinearRegressionModel.o MLinMain.o ../Interface/IRegressionModel.o
+MEXEC=mlinreg
+
+all: $(EXEC) $(MEXEC)
 
 $(EXEC): $(OBJECTS)
 	       	$(CXX) -o $(EXEC) $(OBJECTS)
 
 
-clean:
-	       	rm -f *.o $(EXEC) $(TESTS)
+$(MEXEC): $(MOBJECTS)
+	       	$(CXX) -o $(MEXEC) $(MOBJECTS)
 
+
+clean:
+	       	rm -f *.o $(EXEC) $(MEXEC)
