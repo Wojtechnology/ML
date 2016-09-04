@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "../interface/IRegressionModel.h"
+#include "../Common/IRegressionModel.h"
 
 // Multivariate Linear Regression model for float type values
 class MLinearRegressionModel : public IRegressionModel {

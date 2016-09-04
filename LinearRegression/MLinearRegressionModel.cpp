@@ -34,7 +34,7 @@ void MLinearRegressionModel::train(const Eigen::MatrixXf &x,
 
     Eigen::MatrixXf trainingData(m, n_+1);
     Eigen::VectorXf ones = Eigen::VectorXf::Constant(m, 1); // vector of 1's
-    trainingData << ones, (normalize_ ? normalizeTrainingData(x) : x);
+    trainingData << ones, (normalizerPtr_ ? normalizerPtr_->normalizeTrainingData(x) : x);
 
     for (unsigned int i = 0; i < iterations; ++i) {
         theta_ -= alpha*((trainingData * theta_ - y).transpose() * trainingData).transpose() / m;
@@ -58,6 +58,6 @@ float MLinearRegressionModel::predict(const Eigen::VectorXf &x) const
     assert(x.rows() == n_);
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
-    query << 1, (normalize_ ? normalizeDataPoint(x) : x).transpose();
+    query << 1, (normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x).transpose();
     return query * theta_;
 }

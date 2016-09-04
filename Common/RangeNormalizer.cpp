@@ -1,14 +1,11 @@
-#include <cassert>
+#include "RangeNormalizer.h"
 
-#include "IRegressionModel.h"
-
-IRegressionModel::IRegressionModel(unsigned int n, bool normalize):
-    theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalize_(normalize), means_(n), range_(n)
+RangeNormalizer::RangeNormalizer(unsigned int n) : INormalizer(n)
 {
 }
 
 // normalizes training set and sets the mean and standard deviation vectors
-Eigen::MatrixXf IRegressionModel::normalizeTrainingData(
+Eigen::MatrixXf RangeNormalizer::normalizeTrainingData(
         const Eigen::MatrixXf &x)
 {
     assert(x.cols() == n_);
@@ -21,7 +18,7 @@ Eigen::MatrixXf IRegressionModel::normalizeTrainingData(
 }
 
 // normalizes a data point with previous mean and range
-Eigen::VectorXf IRegressionModel::normalizeDataPoint(
+Eigen::VectorXf RangeNormalizer::normalizeDataPoint(
         const Eigen::VectorXf &x) const
 {
     assert(x.rows() == n_);
