@@ -1,6 +1,6 @@
 CXX=g++
-OBJECTS = LinearRegressionModel.o main.o
-EXEC=linreg
+OBJECTS = LogisticRegressionModel.o main.o
+EXEC=logreg
 
 $(EXEC): $(OBJECTS)
 	       	$(CXX) -o $(EXEC) $(OBJECTS)

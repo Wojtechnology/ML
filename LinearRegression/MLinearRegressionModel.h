@@ -6,7 +6,7 @@
 #include "../Common/IRegressionModel.h"
 
 // Multivariate Linear Regression model for float type values
-class MLinearRegressionModel : public IRegressionModel {
+class MLinearRegressionModel : public IRegressionModel<float> {
 public:
     explicit MLinearRegressionModel(unsigned int n, bool normalize = false) :
              IRegressionModel(n, normalize) { }

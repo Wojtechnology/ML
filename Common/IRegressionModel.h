@@ -5,16 +5,21 @@
 
 #include <Eigen/Dense>
 
-#include "../Common/INormalizer.h"
+#include "INormalizer.h"
+#include "RangeNormalizer.h"
 
 // Interface for regression models
+// T is output type
+template <typename T>
 class IRegressionModel {
 public:
+    typedef Eigen::Matrix<T, Eigen::Dynamic, 1> VectorXT;
+
     virtual void train(const Eigen::MatrixXf &x,
-                       const Eigen::VectorXf &y,
+                       const VectorXT &y,
                        float alpha = 1,
                        unsigned int iterations = 100) = 0;
-    virtual float predict(const Eigen::VectorXf &x) const = 0;
+    virtual T predict(const Eigen::VectorXf &x) const = 0;
 
     // The following two functions do not have to be implemented
     virtual void dump(const std::string &path) const
@@ -27,10 +32,21 @@ public:
         throw "not implemented";
     }
 
-    virtual ~IRegressionModel();
+    virtual ~IRegressionModel()
+    {
+        if (normalizerPtr_) {
+            delete normalizerPtr_;
+        }
+    }
 
 protected:
-    explicit IRegressionModel(unsigned int n, bool normalize = false);
+    explicit IRegressionModel(unsigned int n, bool normalize = false) :
+        theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalizerPtr_(nullptr)
+    {
+        if (normalize) {
+            normalizerPtr_ = new RangeNormalizer(n);
+        }
+    }
 
     Eigen::VectorXf theta_;
     unsigned int n_; // number of features
