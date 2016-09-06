@@ -1,9 +1,10 @@
 CXX=g++
+CXXFLAGS = -std=c++11 -Wall
 OBJECTS = LogisticRegressionModel.o main.o
 EXEC=logreg
 
 $(EXEC): $(OBJECTS)
-	       	$(CXX) -o $(EXEC) $(OBJECTS)
+	       	$(CXX) $(CXXFLAGS) -o $(EXEC) $(OBJECTS)
 
 
 clean:

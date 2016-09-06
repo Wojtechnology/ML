@@ -6,8 +6,8 @@
 class RangeNormalizer : public INormalizer {
 public:
     explicit RangeNormalizer(unsigned int n);
-    Eigen::MatrixXf normalizeTrainingData(const Eigen::MatrixXf &x);
-    Eigen::VectorXf normalizeDataPoint(const Eigen::VectorXf &x) const;
+    Eigen::MatrixXf normalizeTrainingData(const Eigen::MatrixXf &x) override;
+    Eigen::VectorXf normalizeDataPoint(const Eigen::VectorXf &x) const override;
 };
 
 #endif

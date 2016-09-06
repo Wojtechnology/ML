@@ -4,5 +4,7 @@
 
 int main()
 {
-    std::cout << "Hello world\n";
+    if (1) std::cout << "positive\n";
+    if (69) std::cout << "positive\n";
+    if (!(0)) std::cout << "negative\n";
 }

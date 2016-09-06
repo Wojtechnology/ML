@@ -11,11 +11,12 @@ public:
     explicit MLinearRegressionModel(unsigned int n, bool normalize = false) :
              IRegressionModel(n, normalize) { }
 
-    void train(const Eigen::MatrixXf &x,
-               const Eigen::VectorXf &y,
-               float alpha = 1,
-               unsigned int iterations = 100);
-    float predict(const Eigen::VectorXf &x) const;
+private:
+    void train_(const Eigen::MatrixXf &x,
+                const Eigen::VectorXf &y,
+                float alpha,
+                unsigned int iterations) override;
+    float predict_(const Eigen::VectorXf &x) const override;
 };
 
 #endif
