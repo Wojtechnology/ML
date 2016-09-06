@@ -38,7 +38,7 @@ int LogisticRegressionModel::predict_(const Eigen::VectorXf &x) const
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
     query << 1, (normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x).transpose();
-    return sigmoid_((query * theta_)[0]) > 0.5 ? 1 : 0;
+    return sigmoid_((query * theta_)[0]) >= 0.5 ? 1 : 0;
 }
 
 // sigmoid function applied to a vector
