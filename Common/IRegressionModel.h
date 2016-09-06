@@ -62,17 +62,6 @@ public:
         return predict_(x);
     }
 
-    // The following two functions do not have to be implemented
-    virtual void dump(const std::string &path) const
-    {
-        throw "not implemented";
-    }
-
-    virtual void load(const std::string &path)
-    {
-        throw "not implemented";
-    }
-
     virtual ~IRegressionModel()
     {
         if (normalizerPtr_) {
