@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS = -std=c++11 -Wall
-OBJECTS = LogisticRegressionModel.o LogMain.o ../Common/RangeNormalizer.o
+OBJECTS = LogisticRegressionModel.o LogMain.o ../Common/StDevNormalizer.o
 EXEC=logreg
 
 $(EXEC): $(OBJECTS)

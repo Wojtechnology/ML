@@ -1,23 +1,26 @@
-#include "RangeNormalizer.h"
+#include <cmath>
 
-RangeNormalizer::RangeNormalizer(unsigned int n) : INormalizer(n)
+#include "StDevNormalizer.h"
+
+StDevNormalizer::StDevNormalizer(unsigned int n) : INormalizer(n)
 {
 }
 
-// normalizes training set and sets the mean and range vectors
-Eigen::MatrixXf RangeNormalizer::normalizeTrainingData(
+// normalizes training set and sets the mean and standard deviation vectors
+Eigen::MatrixXf StDevNormalizer::normalizeTrainingData(
         const Eigen::MatrixXf &x)
 {
     assert(x.cols() == n_);
+    unsigned int m = x.rows();
     for (int i = 0; i < n_; ++i) {
         means_(i) = x.col(i).mean();
-        range_(i) = x.col(i).maxCoeff() - x.col(i).minCoeff();
+        range_(i) = std::sqrt((x.col(i).array() - means_(i)).pow(2).sum()/m);
     }
     return (x.transpose() - means_.replicate(1, x.rows())).cwiseQuotient(range_.replicate(1, x.rows())).transpose();
 }
 
 // normalizes a data point with previous mean and range
-Eigen::VectorXf RangeNormalizer::normalizeDataPoint(
+Eigen::VectorXf StDevNormalizer::normalizeDataPoint(
         const Eigen::VectorXf &x) const
 {
     assert(x.rows() == n_);

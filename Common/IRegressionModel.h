@@ -7,7 +7,7 @@
 #include <Eigen/Dense>
 
 #include "INormalizer.h"
-#include "RangeNormalizer.h"
+#include "StDevNormalizer.h"
 
 // Interface for regression models
 // T is output type
@@ -74,7 +74,7 @@ protected:
         theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalizerPtr_(nullptr)
     {
         if (normalize) {
-            normalizerPtr_ = new RangeNormalizer(n);
+            normalizerPtr_ = new StDevNormalizer(n);
         }
     }
 

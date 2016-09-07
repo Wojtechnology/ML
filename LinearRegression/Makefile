@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS = -std=c++11 -Wall
 OBJECTS = LinearRegressionModel.o LinMain.o
 EXEC=linreg
-MOBJECTS = MLinearRegressionModel.o MLinMain.o ../Common/RangeNormalizer.o
+MOBJECTS = MLinearRegressionModel.o MLinMain.o ../Common/StDevNormalizer.o
 MEXEC=mlinreg
 
 all: $(EXEC) $(MEXEC)
