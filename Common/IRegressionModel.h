@@ -33,7 +33,8 @@ public:
     void train(const Eigen::MatrixXf &x,
                const VectorXT &y,
                float alpha = 1,
-               unsigned int iterations = 100)
+               unsigned int iterations = 100,
+               float lambda = 1)
     {
         // assert that number of data points is equal for x and y
         assert(x.rows() == y.rows());
@@ -42,7 +43,7 @@ public:
         assert(x.cols() == n_);
 
         // use template implementation
-        train_(x, y, alpha, iterations);
+        train_(x, y, alpha, iterations, lambda);
     }
 
     // predict using current model
@@ -70,8 +71,11 @@ public:
     }
 
 protected:
-    explicit IRegressionModel(unsigned int n, bool normalize = false) :
-        theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalizerPtr_(nullptr)
+    explicit IRegressionModel(
+            unsigned int n,
+            bool normalize = false,
+            bool regularize = false) :
+        theta_(Eigen::VectorXf::Zero(n+1)), n_(n), normalizerPtr_(nullptr), regularize_(regularize)
     {
         if (normalize) {
             normalizerPtr_ = new StDevNormalizer(n);
@@ -81,14 +85,24 @@ protected:
     virtual void train_(const Eigen::MatrixXf &x,
                         const VectorXT &y,
                         float alpha,
-                        unsigned int iterations) = 0;
+                        unsigned int iterations,
+                        float lambda) = 0;
 
     virtual T predict_(const Eigen::VectorXf &x) const = 0;
+
+    // devalues all weights in theta_ except theta_0
+    void regularizeTheta_(float alpha, float lambda, unsigned int m)
+    {
+        for (unsigned int i = 1; i < theta_.rows(); ++i) {
+            theta_[i] = (1 - alpha * lambda / m) * theta_[i];
+        }
+    }
 
     Eigen::VectorXf theta_;
     unsigned int n_; // number of features
 
     INormalizer *normalizerPtr_;
+    bool regularize_;
 };
 
 #endif

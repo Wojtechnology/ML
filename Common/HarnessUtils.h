@@ -15,9 +15,10 @@ void regressionHarness(int argc, char **argv)
 {
     int m, n;
 
-    bool normalize = false, test = false;
+    bool normalize = false, regularize = false, test = false;
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == 'n') normalize = true;
+        if (argv[i][0] == 'r') regularize = true;
         if (argv[i][0] == 't') test = true;
     }
 
@@ -44,17 +45,21 @@ void regressionHarness(int argc, char **argv)
         }
     }
 
-    M model(n, normalize);
+    M model(n, normalize, regularize);
 
-    float alpha;
+    float alpha, lambda = 0;
     unsigned int iterations;
 
     std::cout << "alpha: ";
     std::cin >> alpha;
     std::cout << "iterations: ";
     std::cin >> iterations;
+    if (regularize) {
+        std::cout << "lambda: ";
+        std::cin >> lambda;
+    }
 
-    model.train(x, y, alpha, iterations);
+    model.train(x, y, alpha, iterations, lambda);
 
     Eigen::VectorXf query(n);
     if (!test) {
