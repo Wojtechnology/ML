@@ -10,7 +10,8 @@
 void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
                                      const Eigen::VectorXi &y,
                                      float alpha,
-                                     unsigned int iterations)
+                                     unsigned int iterations,
+                                     float lambda)
 {
     unsigned int m = x.rows();
 
@@ -24,7 +25,14 @@ void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
     }
 
     for (unsigned int i = 0; i < iterations; ++i) {
-        theta_ -= alpha*((sigmoid_(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
+        // calculate change to each parameter (using partial derivatives)
+        Eigen::VectorXf delta = alpha*((sigmoid_(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
+        if (regularize_) {
+            // slightly lower weights of parameters
+            regularizeTheta_(alpha, lambda, m);
+        }
+        theta_ -= delta;
+
         if ((i+1) % ITERATION_PRINT_FREQUENCY == 0) {
             std::cout << "Iteration " << (i+1) << ": ϴ = [";
             std::cout << theta_.transpose() << "]\n";
