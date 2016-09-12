@@ -1,5 +1,5 @@
-#ifndef HARNESS_UTILS_H
-#define HARNESS_UTILS_H
+#ifndef REGRESSION_HARNESS_H
+#define REGRESSION_HARNESS_H
 
 #include <iostream>
 

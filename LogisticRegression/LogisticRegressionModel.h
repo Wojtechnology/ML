@@ -7,7 +7,7 @@
 
 #include "../Common/IRegressionModel.h"
 
-// Binary logistic regressing model
+// Binary logistic regression model
 // Output: if 0: negative class
 //         else: positive class
 class LogisticRegressionModel : public IRegressionModel<int> {
@@ -17,6 +17,9 @@ public:
             bool normalize = false,
             bool regularize = false) :
         IRegressionModel(n, normalize, regularize) { }
+
+    // returns the probability for the positive class
+    float predictProb(const Eigen::VectorXf &x) const;
 
 private:
     void train_(const Eigen::MatrixXf &x,

@@ -40,13 +40,18 @@ void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
     }
 }
 
-// implementation for predicting outcome using current model
-int LogisticRegressionModel::predict_(const Eigen::VectorXf &x) const
+float LogisticRegressionModel::predictProb(const Eigen::VectorXf &x) const
 {
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
     query << 1, (normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x).transpose();
-    return sigmoid_((query * theta_)[0]) >= 0.5 ? 1 : 0;
+    return sigmoid_((query * theta_)[0]);
+}
+
+// implementation for predicting outcome using current model
+int LogisticRegressionModel::predict_(const Eigen::VectorXf &x) const
+{
+    return predictProb(x) >= 0.5 ? 1 : 0;
 }
 
 // sigmoid function applied to a vector

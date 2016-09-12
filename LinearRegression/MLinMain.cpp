@@ -1,4 +1,4 @@
-#include "../Common/HarnessUtils.h"
+#include "../Common/RegressionHarness.h"
 #include "MLinearRegressionModel.h"
 
 int main(int argc, char **argv)
