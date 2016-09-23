@@ -1,6 +1,6 @@
 #include <iostream>
-#include <math.h>
 
+#include "../Common/MLUtils.h"
 #include "LogisticRegressionModel.h"
 
 #define ITERATION_PRINT_FREQUENCY 100
@@ -26,7 +26,7 @@ void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
 
     for (unsigned int i = 0; i < iterations; ++i) {
         // calculate change to each parameter (using partial derivatives)
-        Eigen::VectorXf delta = alpha*((sigmoid_(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
+        Eigen::VectorXf delta = alpha*((MLUtils::sigmoid(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
         if (regularize_) {
             // slightly lower weights of parameters
             regularizeTheta_(alpha, lambda, m);
@@ -45,23 +45,11 @@ float LogisticRegressionModel::predictProb(const Eigen::VectorXf &x) const
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
     query << 1, (normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x).transpose();
-    return sigmoid_((query * theta_)[0]);
+    return MLUtils::sigmoid((query * theta_)[0]);
 }
 
 // implementation for predicting outcome using current model
 int LogisticRegressionModel::predict_(const Eigen::VectorXf &x) const
 {
     return predictProb(x) >= 0.5 ? 1 : 0;
-}
-
-// sigmoid function applied to a vector
-Eigen::VectorXf LogisticRegressionModel::sigmoid_(const Eigen::VectorXf &v)
-{
-    return v.unaryExpr<float(*)(float)>(&LogisticRegressionModel::sigmoid_);
-}
-
-// sigmoid function applied to a float
-float LogisticRegressionModel::sigmoid_(float x)
-{
-    return 1.0 / (1.0 + exp(-x));
 }

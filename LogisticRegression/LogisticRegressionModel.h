@@ -28,9 +28,6 @@ private:
                 unsigned int iterations,
                 float lambda) override;
     int predict_(const Eigen::VectorXf &x) const override;
-
-    static Eigen::VectorXf sigmoid_(const Eigen::VectorXf &v);
-    static float sigmoid_(float x);
 };
 
 #endif
