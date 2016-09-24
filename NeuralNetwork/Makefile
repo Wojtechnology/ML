@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS = -std=c++11 -Wall
-OBJECTS = NeuralNetworkModel.o NNMain.o ../Common/MLUtils.o
+OBJECTS = NeuralNetworkModel.o NNMain.o ../Common/MLUtils.o ../Common/StDevNormalizer.o
 EXEC=nn
 
 all: $(EXEC) $(MEXEC)

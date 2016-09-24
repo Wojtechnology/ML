@@ -6,6 +6,8 @@
 
 #include <Eigen/Dense>
 
+#include "../Common/INormalizer.h"
+
 class NeuralNetworkModel {
 public:
     NeuralNetworkModel(int numLayers, const std::vector<int> &layerSizes);
@@ -54,6 +56,7 @@ private:
     int inputSize_;
     int outputSize_;
     int numLayers_;
+    INormalizer *normalizerPtr_;
 
     // helper methods
     void initializeThetas_();

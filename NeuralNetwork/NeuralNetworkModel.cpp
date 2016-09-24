@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "../Common/MLUtils.h"
+#include "../Common/StDevNormalizer.h"
 #include "NeuralNetworkModel.h"
 
 NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &layerSizes) :
@@ -18,10 +19,15 @@ NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &la
         thetas_[i].resize(layerSizes[i+1], layerSizes[i]+1);
     }
     initializeThetas_();
+
+    // Initialize normalizer
+    normalizerPtr_ = new StDevNormalizer(inputSize_);
 }
 
 NeuralNetworkModel::~NeuralNetworkModel()
 {
+    // Remove normalizer
+    delete normalizerPtr_;
 }
 
 void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
@@ -35,12 +41,13 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
     assert(x.rows() == y.rows());
 
     int m = x.rows();
+    Eigen::MatrixXf xNorm = normalizerPtr_->normalizeTrainingData(x);
 
     for (int i = 0; i < iterations; ++i) {
         std::vector<Eigen::MatrixXf> deltaSums = deltaZeros_();
         for (int j = 0; j < m; ++j) {
             // 1) forward propagation to calculate activation values
-            std::vector<Eigen::VectorXf> a = forwardProp_(x.row(j).transpose());
+            std::vector<Eigen::VectorXf> a = forwardProp_(xNorm.row(j).transpose());
             // 2) back propagation to calculate error terms and sum to total error
             std::deque<Eigen::VectorXf> d = backProp_(y.row(j).transpose(), a);
 
@@ -61,7 +68,7 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
 Eigen::VectorXf NeuralNetworkModel::predict(const Eigen::VectorXf &x)
 {
     assert(x.rows() == inputSize_);
-    std::vector<Eigen::VectorXf> a = forwardProp_(x);
+    std::vector<Eigen::VectorXf> a = forwardProp_(normalizerPtr_->normalizeDataPoint(x));
     return a[numLayers_-1];
 }
 
