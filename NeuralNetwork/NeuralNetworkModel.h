@@ -1,6 +1,7 @@
 #ifndef NEURAL_NETWORK_MODEL_H
 #define NEURAL_NETWORK_MODEL_H
 
+#include <deque>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -19,15 +20,20 @@ public:
     //   --- xm --- ]
     //
     // y in the form:
-    // [ y1
-    //   y2
-    //  ....
-    //   ym ]
+    // [ --- y1 ---
+    //   --- y2 ---
+    //      ....
+    //   --- ym --- ]
     //
+    // 1) forward propagation to calculate activation values
+    // 2) back propagation to calculate error terms and sum to total error
+    // 3) calculate partial derivatives
+    // 4) gradient descent
+    // 5) repeat until hopefully finding some minima
     void train(const Eigen::MatrixXf &x,
-               const Eigen::VectorXf &y,
+               const Eigen::MatrixXf &y,
                float alpha,
-               unsigned int iterations,
+               int iterations,
                float lambda);
 
     // predict using current model
@@ -40,6 +46,9 @@ public:
     //
     Eigen::VectorXf predict(const Eigen::VectorXf &x);
 
+    // prints the current thetas between all layers
+    void print();
+
 private:
     std::vector<Eigen::MatrixXf> thetas_;
     int inputSize_;
@@ -48,6 +57,7 @@ private:
 
     // helper methods
     void initializeThetas_();
+    std::vector<Eigen::MatrixXf> deltaZeros_();
     std::vector<Eigen::VectorXf> forwardProp_(const Eigen::VectorXf &x);
     std::deque<Eigen::VectorXf> backProp_(
         const Eigen::VectorXf &y, const std::vector<Eigen::VectorXf> &a);
