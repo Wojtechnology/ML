@@ -1,4 +1,6 @@
 #include <cassert>
+#include <deque>
+#include <math.h>
 
 #include "../Common/MLUtils.h"
 #include "NeuralNetworkModel.h"
@@ -18,34 +20,76 @@ NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &la
     initializeThetas_();
 }
 
-// Returns output layer after running forward propagation
-Eigen::VectorXf NeuralNetworkModel::predict(const Eigen::VectorXf &input)
+NeuralNetworkModel::~NeuralNetworkModel()
 {
-    assert(input.rows() == inputSize_);
-    std::vector<Eigen::VectorXf> layers = forwardProp_(input);
-    return layers[numLayers_-1];
 }
 
-// Randomly initializes thetas
+void train(const Eigen::MatrixXf &x,
+           const Eigen::VectorXf &y,
+           float alpha,
+           int iterations,
+           float lambda)
+{
+    for (int i = 0; i < iterations; ++i) {
+        // 1) forward propagation to calculate activation values and output layer
+        // 2) back propagation to calculate error terms and sum to total error
+        // 3) calculate partial derivatives
+        // 4) gradient descent
+    }
+}
+
+// Returns output layer after running forward propagation
+Eigen::VectorXf NeuralNetworkModel::predict(const Eigen::VectorXf &x)
+{
+    assert(x.rows() == inputSize_);
+    std::vector<Eigen::VectorXf> a = forwardProp_(x);
+    return a[numLayers_-1];
+}
+
+// Randomly initializes thetas (using Hugo Larochelle, Glorot & Bengio (2010) method)
+// Uses uniform distribution with bounds +/- sqrt(6/(inNodes + outNodes))
 void NeuralNetworkModel::initializeThetas_()
 {
-    thetas_[0] << -30, 20, 20,
-                  10, -20, -20;
-    thetas_[1] << -10, 20, 20;
+    // Initialize seed
+    srand (time(NULL));
+
+    for (int i = 0; i < numLayers_-1; ++i) {
+        int outNodes = thetas_[i].rows();
+        // NB: including bias unit as input
+        int inNodes = thetas_[i].cols();
+        float bound = sqrt(6 / (((float) inNodes) + ((float) outNodes)));
+
+        for (int j = 0; j < outNodes; ++j) {
+            for (int k = 0; k < inNodes; ++k) {
+                float randInit = - bound + ((float) rand()) / ((float) (RAND_MAX/(2 * bound)));
+                thetas_[i](j, k) = randInit;
+            }
+        }
+    }
 }
 
 // Returns all layers after running forward propagation
-std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::VectorXf &input)
+std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::VectorXf &x)
 {
-    assert(input.rows() == inputSize_);
-    std::vector<Eigen::VectorXf> layers(1);
-    layers[0] = input;
+    assert(x.rows() == inputSize_);
+    std::vector<Eigen::VectorXf> a(1);
+    a[0] = x;
     for (int i = 0; i < numLayers_-1; ++i) {
         // Add bias unit
-        Eigen::VectorXf curLayer(layers[i].rows()+1);
-        curLayer << 1, layers[i];
-        layers.push_back(MLUtils::sigmoid(thetas_[i] * curLayer));
+        Eigen::VectorXf curLayer(a[i].rows()+1);
+        curLayer << 1, a[i];
+        a.push_back(MLUtils::sigmoid(thetas_[i] * curLayer));
     }
 
-    return layers;
+    return a;
+}
+
+// Returns all deltas for a particular training example
+std::deque<Eigen::VectorXf> NeuralNetworkModel::backProp_(
+    const Eigen::VectorXf &y, const std::vector<Eigen::VectorXf> &a)
+{
+    assert(y.rows() == outputSize_);
+    std::deque<Eigen::VectorXf> d(1);
+
+    return d;
 }
