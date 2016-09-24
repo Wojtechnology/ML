@@ -58,8 +58,9 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
 
         // 3) calculate partial derivatives
         // 4) gradient descent
+        std::vector<Eigen::MatrixXf> thetasWOBias = thetasWithoutBias_();
         for (int j = 0; j < numLayers_-1; ++j) {
-            thetas_[j] -= alpha * (deltaSums[j] / m);
+            thetas_[j] -= alpha * (deltaSums[j] / m + lambda * thetasWOBias[j] / m);
         }
     }
 }
@@ -117,6 +118,16 @@ void NeuralNetworkModel::initializeThetas_()
             }
         }
     }
+}
+
+// Returns thetas with bias params set to zeroes (for regularization)
+std::vector<Eigen::MatrixXf> NeuralNetworkModel::thetasWithoutBias_()
+{
+    std::vector<Eigen::MatrixXf> thetas = thetas_;
+    for (Eigen::MatrixXf theta : thetas) {
+        theta.col(0) = Eigen::VectorXf::Zero(theta.rows());
+    }
+    return thetas;
 }
 
 // Returns zero matrices the same sizes as thetas_

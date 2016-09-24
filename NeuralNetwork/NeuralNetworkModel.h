@@ -60,6 +60,7 @@ private:
 
     // helper methods
     void initializeThetas_();
+    std::vector<Eigen::MatrixXf> thetasWithoutBias_();
     std::vector<Eigen::MatrixXf> deltaZeros_();
     std::vector<Eigen::VectorXf> forwardProp_(const Eigen::VectorXf &x);
     std::deque<Eigen::VectorXf> backProp_(
