@@ -7,23 +7,29 @@
 
 int main(int argc, char **argv)
 {
-    int numLayers = 4;
-    std::vector<int> layerSizes = {2, 100, 100, 1};
+    int numLayers = 3;
+    std::vector<int> layerSizes = {2, 2, 1};
     NeuralNetworkModel model(numLayers, layerSizes);
 
-    Eigen::MatrixXf x(5, 2);
-    Eigen::MatrixXf y(5, 1);
-    x << 1, 1,
-         2, 2,
-         3, 3,
-         4, 4,
-         5, 5;
+    Eigen::MatrixXf x(4, 2);
+    Eigen::MatrixXf y(4, 1);
+    x << 0, 0,
+         0, 1,
+         1, 0,
+         1, 1,
     y << 1,
-         2,
-         3,
-         4,
-         5;
+         0,
+         0,
+         1,
 
-    model.train(x, y, 0.01, 1000, 0.01);
+    model.train(x, y, 1, 1000, 0);
+    model.print();
 
+    float first, second;
+    while (std::cin >> first) {
+        std::cin >> second;
+        Eigen::VectorXf x(2);
+        x << first, second;
+        std::cout << model.predict(x) << std::endl;
+    }
 }

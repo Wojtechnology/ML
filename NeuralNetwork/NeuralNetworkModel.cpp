@@ -43,6 +43,16 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
             std::vector<Eigen::VectorXf> a = forwardProp_(x.row(j).transpose());
             // 2) back propagation to calculate error terms and sum to total error
             std::deque<Eigen::VectorXf> d = backProp_(y.row(j).transpose(), a);
+
+            for (int k = 0; k < numLayers_-1; ++k) {
+                deltaSums[k] += d[k] * a[k].transpose();
+            }
+        }
+
+        // 3) calculate partial derivatives
+        // 4) gradient descent
+        for (int j = 0; j < numLayers_-1; ++j) {
+            thetas_[j] -= alpha * (deltaSums[j] / m);
         }
     }
 }
@@ -57,12 +67,26 @@ Eigen::VectorXf NeuralNetworkModel::predict(const Eigen::VectorXf &x)
 
 void NeuralNetworkModel::print()
 {
+    // Print thetas
     std::cout << std::endl;
     for (int i = 0; i < numLayers_-1; ++i) {
         std::cout << "Theta from layer " << (i + 1) << " to ";
-        std::cout << (i + 2) << ":\n";
+        std::cout << (i + 2) << ": " << thetas_[i].rows() << " x ";
+        std::cout << thetas_[i].cols() << std::endl;
         std::cout << thetas_[i];
         std::cout << std::endl << std::endl;
+    }
+    // Print sizes of activation vectors
+    std::vector<Eigen::VectorXf> a = forwardProp_(Eigen::VectorXf::Zero(inputSize_));
+    for (int i = 0; i < numLayers_; ++i) {
+        std::cout << "a(" << (i + 1) << "): " << a[i].rows();
+        std::cout << " x " << a[i].cols() << std::endl << std::endl;
+    }
+    // Print sizes of error terms
+    std::deque<Eigen::VectorXf> d = backProp_(Eigen::VectorXf::Zero(outputSize_), a);
+    for (int i = 0; i < numLayers_-1; ++i) {
+        std::cout << "d(" << (i + 2) << "): " << d[i].rows();
+        std::cout << " x " << d[i].cols() << std::endl << std::endl;
     }
 }
 
@@ -128,16 +152,14 @@ std::deque<Eigen::VectorXf> NeuralNetworkModel::backProp_(
     std::deque<Eigen::VectorXf> d(1);
     d[0] = a[numLayers_-1] - y;
     for (int i = numLayers_-2; i > 0; --i) {
-        // If not output layer, remove bias unit
-        Eigen::VectorXf curD(d[0].rows() - (i == numLayers_-2 ? 0 : 1));
-        if (i == numLayers_-2) {
-            curD << d[0];
-        } else {
-            curD << d[0].block(1, 0, d[0].rows()-1, 1);
-        }
-
+        // Calculate error term for previous layer
         Eigen::VectorXf ones = Eigen::VectorXf::Ones(a[i].rows());
-        d.push_front((thetas_[i].transpose() * curD).cwiseProduct(a[i].cwiseProduct(ones-a[i])));
+        d.push_front((thetas_[i].transpose() * d[0]).cwiseProduct(a[i].cwiseProduct(ones-a[i])));
+
+        // Now remove bias unit
+        Eigen::VectorXf curD(d[0].rows() - 1);
+        curD << d[0].block(1, 0, d[0].rows()-1, 1);
+        d[0] = curD;
     }
     return d;
 }
