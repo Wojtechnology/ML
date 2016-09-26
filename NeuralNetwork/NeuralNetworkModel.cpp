@@ -60,7 +60,8 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
         // 4) gradient descent
         std::vector<Eigen::MatrixXf> thetasWOBias = thetasWithoutBias_();
         for (int j = 0; j < numLayers_-1; ++j) {
-            thetas_[j] -= alpha * (deltaSums[j] / m + lambda * thetasWOBias[j] / m);
+            Eigen::MatrixXf gradient = deltaSums[j] / m + lambda * thetasWOBias[j] / m;
+            thetas_[j] -= alpha * gradient;
         }
     }
 }

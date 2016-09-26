@@ -36,7 +36,7 @@ public:
                const Eigen::MatrixXf &y,
                float alpha,
                int iterations,
-               float lambda);
+               float lambda = 0);
 
     // predict using current model
     //
@@ -65,6 +65,7 @@ private:
     std::vector<Eigen::VectorXf> forwardProp_(const Eigen::VectorXf &x);
     std::deque<Eigen::VectorXf> backProp_(
         const Eigen::VectorXf &y, const std::vector<Eigen::VectorXf> &a);
+
 };
 
 #endif

@@ -22,7 +22,7 @@ int main(int argc, char **argv)
          0,
          1,
 
-    model.train(x, y, 1, 1000, 0);
+    model.train(x, y, 1, 1000);
     model.print();
 
     float first, second;
