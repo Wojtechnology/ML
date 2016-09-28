@@ -6,6 +6,8 @@
 #include "../Common/StDevNormalizer.h"
 #include "NeuralNetworkModel.h"
 
+#define ITER_FREQ 1
+
 NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &layerSizes) :
     thetas_(numLayers-1), numLayers_(numLayers)
 {
@@ -63,6 +65,7 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
             Eigen::MatrixXf gradient = deltaSums[j] / m + lambda * thetasWOBias[j] / m;
             thetas_[j] -= alpha * gradient;
         }
+        if ((i+1) % ITER_FREQ == 0) std::cout << "Iteration: " << i + 1 << std::endl;
     }
 }
 
