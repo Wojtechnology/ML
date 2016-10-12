@@ -6,12 +6,15 @@ MLogisticRegressionModel::MLogisticRegressionModel(
         unsigned int n,
         unsigned int numClasses,
         bool normalize,
-        bool regularize) :
-    numClasses_(numClasses), models_(numClasses)
+        float alpha,
+        unsigned int iterations,
+        float lambda) :
+    IModel<int>(n, normalize), numClasses_(numClasses), models_(numClasses)
 {
     assert(numClasses >= 2);
     for (unsigned int i = 0; i < numClasses; ++i) {
-        models_[i] = new LogisticRegressionModel(n, normalize, regularize);
+        // Set normalize to false since we already normalize here
+        models_[i] = new LogisticRegressionModel(n, false, alpha, iterations, lambda);
     }
 }
 
@@ -22,23 +25,21 @@ MLogisticRegressionModel::~MLogisticRegressionModel()
     }
 }
 
-void MLogisticRegressionModel::train(const Eigen::MatrixXf &x,
-                                     const Eigen::VectorXi &y,
-                                     float alpha,
-                                     unsigned int iterations,
-                                     float lambda)
+void MLogisticRegressionModel::train_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y)
 {
+    Eigen::MatrixXf trainingData = normalizerPtr_ ? normalizerPtr_->normalizeTrainingData(x) : x;
     for (unsigned int i = 0; i < numClasses_; ++i) {
-        models_[i]->train(x, isolateClass_(y, i), alpha, iterations, lambda);
+        models_[i]->train(trainingData, isolateClass_(y, i));
     }
 }
 
-int MLogisticRegressionModel::predict(const Eigen::VectorXf &x) const
+int MLogisticRegressionModel::predict_(const Eigen::VectorXf &x) const
 {
+    Eigen::VectorXf query = normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x;
     unsigned int bestClass = 0;
     float highestProb = 0;
     for (unsigned int i = 0; i < numClasses_; ++i) {
-        float prob = models_[i]->predict(x);
+        float prob = models_[i]->predictProb(query);
         if (prob > highestProb) {
             highestProb = prob;
             bestClass = i;

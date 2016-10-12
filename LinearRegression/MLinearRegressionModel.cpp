@@ -6,11 +6,7 @@
 
 // implementation for training model using gradient descent
 // cost function is squared difference
-void MLinearRegressionModel::train_(const Eigen::MatrixXf &x,
-                                    const Eigen::VectorXf &y,
-                                    float alpha,
-                                    unsigned int iterations,
-                                    float lambda)
+void MLinearRegressionModel::train_(const Eigen::MatrixXf &x, const Eigen::VectorXf &y)
 {
     unsigned int m = x.rows();
 
@@ -18,13 +14,10 @@ void MLinearRegressionModel::train_(const Eigen::MatrixXf &x,
     Eigen::VectorXf ones = Eigen::VectorXf::Constant(m, 1); // vector of 1's
     trainingData << ones, (normalizerPtr_ ? normalizerPtr_->normalizeTrainingData(x) : x);
 
-    for (unsigned int i = 0; i < iterations; ++i) {
+    for (unsigned int i = 0; i < iterations_; ++i) {
         // calculate change to each parameter (using partial derivatives)
-        Eigen::VectorXf delta = alpha*((trainingData * theta_ - y).transpose() * trainingData).transpose() / m;
-        if (regularize_) {
-            // slightly lower weights of parameters
-            regularizeTheta_(alpha, lambda, m);
-        }
+        Eigen::VectorXf delta = alpha_*((trainingData * theta_ - y).transpose() * trainingData).transpose() / m;
+        regularizeTheta_(alpha_, lambda_, m);
         theta_ -= delta;
 
         if ((i+1) % ITERATION_PRINT_FREQUENCY == 0) {

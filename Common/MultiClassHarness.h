@@ -13,10 +13,9 @@ void multiClassHarness(int argc, char **argv)
 {
     int m, n, numClasses;
 
-    bool normalize = false, regularize = false;
+    bool normalize = false;
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == 'n') normalize = true;
-        if (argv[i][0] == 'r') regularize = true;
     }
 
     std::cout << "m: ";
@@ -44,8 +43,6 @@ void multiClassHarness(int argc, char **argv)
         }
     }
 
-    MLogisticRegressionModel model(n, numClasses, normalize, regularize);
-
     float alpha, lambda = 0;
     unsigned int iterations;
 
@@ -53,12 +50,11 @@ void multiClassHarness(int argc, char **argv)
     std::cin >> alpha;
     std::cout << "iterations: ";
     std::cin >> iterations;
-    if (regularize) {
-        std::cout << "lambda: ";
-        std::cin >> lambda;
-    }
+    std::cout << "lambda: ";
+    std::cin >> lambda;
 
-    model.train(x, y, alpha, iterations, lambda);
+    MLogisticRegressionModel model(n, numClasses, normalize, alpha, iterations, lambda);
+    model.train(x, y);
 
     Eigen::VectorXf query(n);
     while (true) {

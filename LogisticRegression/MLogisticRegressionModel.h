@@ -5,27 +5,26 @@
 
 #include <Eigen/Dense>
 
+#include "../Common/IModel.h"
 #include "LogisticRegressionModel.h"
 
 // Multiclass logistic regression model
 // 0 is first class, 1 is second, etc
-class MLogisticRegressionModel {
+class MLogisticRegressionModel : public IModel<int> {
 public:
     MLogisticRegressionModel(
-            unsigned int n,
-            unsigned int numClasses,
-            bool normalize = false,
-            bool regularize = false);
+        unsigned int n,
+        unsigned int numClasses,
+        bool normalize = true,
+        float alpha = 1,
+        unsigned int iterations = 100,
+        float lambda = 1);
     ~MLogisticRegressionModel();
 
-    void train(const Eigen::MatrixXf &x,
-               const Eigen::VectorXi &y,
-               float alpha = 1,
-               unsigned int iterations = 100,
-               float lambda = 1);
-    int predict(const Eigen::VectorXf &x) const;
-
 private:
+    void train_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y) override;
+    int predict_(const Eigen::VectorXf &x) const override;
+
     static Eigen::VectorXi isolateClass_(const Eigen::VectorXi &x, int cl);
 
     unsigned int numClasses_;

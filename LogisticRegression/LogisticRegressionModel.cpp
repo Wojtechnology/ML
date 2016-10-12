@@ -7,11 +7,7 @@
 
 // implementation for training model using gradient descent
 // uses sigmoid function
-void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
-                                     const Eigen::VectorXi &y,
-                                     float alpha,
-                                     unsigned int iterations,
-                                     float lambda)
+void LogisticRegressionModel::train_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y)
 {
     unsigned int m = x.rows();
 
@@ -24,13 +20,10 @@ void LogisticRegressionModel::train_(const Eigen::MatrixXf &x,
         output[i] = y[i] ? 1.0 : 0.0;
     }
 
-    for (unsigned int i = 0; i < iterations; ++i) {
+    for (unsigned int i = 0; i < iterations_; ++i) {
         // calculate change to each parameter (using partial derivatives)
-        Eigen::VectorXf delta = alpha*((MLUtils::sigmoid(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
-        if (regularize_) {
-            // slightly lower weights of parameters
-            regularizeTheta_(alpha, lambda, m);
-        }
+        Eigen::VectorXf delta = alpha_*((MLUtils::sigmoid(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
+        regularizeTheta_(alpha_, lambda_, m);
         theta_ -= delta;
 
         if ((i+1) % ITERATION_PRINT_FREQUENCY == 0) {
