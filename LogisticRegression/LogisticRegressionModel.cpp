@@ -22,7 +22,7 @@ void LogisticRegressionModel::train_(const Eigen::MatrixXf &x, const Eigen::Vect
 
     for (unsigned int i = 0; i < iterations_; ++i) {
         // calculate change to each parameter (using partial derivatives)
-        Eigen::VectorXf delta = alpha_*((MLUtils::sigmoid(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
+        Eigen::VectorXf delta = alpha_*((sigmoid(trainingData * theta_) - output).transpose() * trainingData).transpose() / m;
         regularizeTheta_(alpha_, lambda_, m);
         theta_ -= delta;
 
@@ -38,7 +38,7 @@ float LogisticRegressionModel::predictProb(const Eigen::VectorXf &x) const
     Eigen::RowVectorXf query(x.rows()+1);
     // append x_0
     query << 1, (normalizerPtr_ ? normalizerPtr_->normalizeDataPoint(x) : x).transpose();
-    return MLUtils::sigmoid((query * theta_)[0]);
+    return sigmoid((query * theta_)[0]);
 }
 
 // implementation for predicting outcome using current model

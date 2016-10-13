@@ -21,7 +21,6 @@ NeuralNetworkModel::NeuralNetworkModel(
     // Need at least input and output layers
     assert(numLayers >= 2);
     assert(numLayers == layerSizes.size());
-    inputSize_ = layerSizes[0];
     outputSize_ = layerSizes[numLayers-1];
 
     for (int i = 0; i < numLayers-1; ++i) {
@@ -36,9 +35,7 @@ NeuralNetworkModel::~NeuralNetworkModel()
 
 void NeuralNetworkModel::train_(const Eigen::MatrixXf &x, const Eigen::MatrixXf &y)
 {
-    assert(x.cols() == inputSize_);
     assert(y.cols() == outputSize_);
-    assert(x.rows() == y.rows());
 
     int m = x.rows();
     Eigen::MatrixXf xNorm = normalizerPtr_->normalizeTrainingData(x);
@@ -70,7 +67,7 @@ void NeuralNetworkModel::train_(const Eigen::MatrixXf &x, const Eigen::MatrixXf 
 // Returns output layer after running forward propagation
 Eigen::VectorXf NeuralNetworkModel::predict_(const Eigen::VectorXf &x) const
 {
-    assert(x.rows() == inputSize_);
+    assert(x.rows() == n_);
     std::vector<Eigen::VectorXf> a = forwardProp_(normalizerPtr_->normalizeDataPoint(x));
     return a[numLayers_-1];
 }
@@ -87,7 +84,7 @@ void NeuralNetworkModel::print()
         std::cout << std::endl << std::endl;
     }
     // Print sizes of activation vectors
-    std::vector<Eigen::VectorXf> a = forwardProp_(Eigen::VectorXf::Zero(inputSize_));
+    std::vector<Eigen::VectorXf> a = forwardProp_(Eigen::VectorXf::Zero(n_));
     for (int i = 0; i < numLayers_; ++i) {
         std::cout << "a(" << (i + 1) << "): " << a[i].rows();
         std::cout << " x " << a[i].cols() << std::endl << std::endl;
@@ -145,7 +142,7 @@ std::vector<Eigen::MatrixXf> NeuralNetworkModel::deltaZeros_() const
 // Returns all layers after running forward propagation
 std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::VectorXf &x) const
 {
-    assert(x.rows() == inputSize_);
+    assert(x.rows() == n_);
 
     std::vector<Eigen::VectorXf> a(1);
     a[0] = x;
@@ -156,7 +153,7 @@ std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::Vecto
         a[i] = curLayer;
 
         // Calculate activations
-        a.push_back(MLUtils::sigmoid(thetas_[i] * a[i]));
+        a.push_back(sigmoid(thetas_[i] * a[i]));
     }
 
     return a;

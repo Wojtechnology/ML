@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS = -std=c++11 -Wall
-OBJECTS = SVMModel.o SVMMain.o
+OBJECTS = SVMModel.o SVMMain.o SVMKernel.o ../Common/StDevNormalizer.o ../Common/MLUtils.o
 EXEC=svm
 
 all: $(EXEC) $(MEXEC)

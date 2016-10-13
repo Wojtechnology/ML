@@ -55,7 +55,6 @@ private:
     Eigen::VectorXf predict_(const Eigen::VectorXf &x) const override;
 
     std::vector<Eigen::MatrixXf> thetas_;
-    int inputSize_;
     int outputSize_;
     int numLayers_;
 
