@@ -8,8 +8,15 @@
 
 #define ITER_FREQ 1
 
-NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &layerSizes) :
-    thetas_(numLayers-1), numLayers_(numLayers)
+NeuralNetworkModel::NeuralNetworkModel(
+        int numLayers,
+        const std::vector<int> &layerSizes,
+        float alpha,
+        int iterations,
+        float lambda) :
+    IModel<Eigen::VectorXf, Eigen::MatrixXf>(layerSizes[0], true),
+    thetas_(numLayers-1), numLayers_(numLayers), alpha_(alpha), iterations_(iterations),
+    lambda_(lambda)
 {
     // Need at least input and output layers
     assert(numLayers >= 2);
@@ -21,22 +28,13 @@ NeuralNetworkModel::NeuralNetworkModel(int numLayers, const std::vector<int> &la
         thetas_[i].resize(layerSizes[i+1], layerSizes[i]+1);
     }
     initializeThetas_();
-
-    // Initialize normalizer
-    normalizerPtr_ = new StDevNormalizer(inputSize_);
 }
 
 NeuralNetworkModel::~NeuralNetworkModel()
 {
-    // Remove normalizer
-    delete normalizerPtr_;
 }
 
-void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
-                               const Eigen::MatrixXf &y,
-                               float alpha,
-                               int iterations,
-                               float lambda)
+void NeuralNetworkModel::train_(const Eigen::MatrixXf &x, const Eigen::MatrixXf &y)
 {
     assert(x.cols() == inputSize_);
     assert(y.cols() == outputSize_);
@@ -45,7 +43,7 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
     int m = x.rows();
     Eigen::MatrixXf xNorm = normalizerPtr_->normalizeTrainingData(x);
 
-    for (int i = 0; i < iterations; ++i) {
+    for (int i = 0; i < iterations_; ++i) {
         std::vector<Eigen::MatrixXf> deltaSums = deltaZeros_();
         for (int j = 0; j < m; ++j) {
             // 1) forward propagation to calculate activation values
@@ -62,15 +60,15 @@ void NeuralNetworkModel::train(const Eigen::MatrixXf &x,
         // 4) gradient descent
         std::vector<Eigen::MatrixXf> thetasWOBias = thetasWithoutBias_();
         for (int j = 0; j < numLayers_-1; ++j) {
-            Eigen::MatrixXf gradient = deltaSums[j] / m + lambda * thetasWOBias[j] / m;
-            thetas_[j] -= alpha * gradient;
+            Eigen::MatrixXf gradient = deltaSums[j] / m + lambda_ * thetasWOBias[j] / m;
+            thetas_[j] -= alpha_ * gradient;
         }
         if ((i+1) % ITER_FREQ == 0) std::cout << "Iteration: " << i + 1 << std::endl;
     }
 }
 
 // Returns output layer after running forward propagation
-Eigen::VectorXf NeuralNetworkModel::predict(const Eigen::VectorXf &x)
+Eigen::VectorXf NeuralNetworkModel::predict_(const Eigen::VectorXf &x) const
 {
     assert(x.rows() == inputSize_);
     std::vector<Eigen::VectorXf> a = forwardProp_(normalizerPtr_->normalizeDataPoint(x));
@@ -125,7 +123,7 @@ void NeuralNetworkModel::initializeThetas_()
 }
 
 // Returns thetas with bias params set to zeroes (for regularization)
-std::vector<Eigen::MatrixXf> NeuralNetworkModel::thetasWithoutBias_()
+std::vector<Eigen::MatrixXf> NeuralNetworkModel::thetasWithoutBias_() const
 {
     std::vector<Eigen::MatrixXf> thetas = thetas_;
     for (Eigen::MatrixXf theta : thetas) {
@@ -135,7 +133,7 @@ std::vector<Eigen::MatrixXf> NeuralNetworkModel::thetasWithoutBias_()
 }
 
 // Returns zero matrices the same sizes as thetas_
-std::vector<Eigen::MatrixXf> NeuralNetworkModel::deltaZeros_()
+std::vector<Eigen::MatrixXf> NeuralNetworkModel::deltaZeros_() const
 {
     std::vector<Eigen::MatrixXf> deltaSums;
     for (Eigen::MatrixXf theta : thetas_) {
@@ -145,7 +143,7 @@ std::vector<Eigen::MatrixXf> NeuralNetworkModel::deltaZeros_()
 }
 
 // Returns all layers after running forward propagation
-std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::VectorXf &x)
+std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::VectorXf &x) const
 {
     assert(x.rows() == inputSize_);
 
@@ -166,7 +164,7 @@ std::vector<Eigen::VectorXf> NeuralNetworkModel::forwardProp_(const Eigen::Vecto
 
 // Returns all deltas for a particular training example
 std::deque<Eigen::VectorXf> NeuralNetworkModel::backProp_(
-    const Eigen::VectorXf &y, const std::vector<Eigen::VectorXf> &a)
+    const Eigen::VectorXf &y, const std::vector<Eigen::VectorXf> &a) const
 {
     assert(y.rows() == outputSize_);
     assert(a.size() == numLayers_);

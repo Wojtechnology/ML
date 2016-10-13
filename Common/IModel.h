@@ -10,10 +10,10 @@
 
 // Interface for all models
 // T is output type
-template <typename T>
+// V is training data output type
+template <typename T, typename V = Eigen::Matrix<T, Eigen::Dynamic, 1>>
 class IModel {
 public:
-    typedef Eigen::Matrix<T, Eigen::Dynamic, 1> VectorXT;
 
     // train the model using given training data
     //
@@ -29,7 +29,7 @@ public:
     //  ....
     //   ym ]
     //
-    void train(const Eigen::MatrixXf &x, const VectorXT &y)
+    void train(const Eigen::MatrixXf &x, const V &y)
     {
         // assert that number of data points is equal for x and y
         assert(x.rows() == y.rows());
@@ -75,7 +75,7 @@ protected:
         }
     }
 
-    virtual void train_(const Eigen::MatrixXf &x, const VectorXT &y) = 0;
+    virtual void train_(const Eigen::MatrixXf &x, const V &y) = 0;
     virtual T predict_(const Eigen::VectorXf &x) const = 0;
 
     unsigned int n_; // number of features
