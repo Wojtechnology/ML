@@ -13,7 +13,7 @@ void courseraGates()
 {
     int numLayers = 3;
     std::vector<int> layerSizes = {2, 2, 1};
-    NeuralNetworkModel model(numLayers, layerSizes);
+    NeuralNetworkModel model(numLayers, layerSizes, 1, 1000, 0);
 
     Eigen::MatrixXf X(4, 2);
     Eigen::MatrixXf y(4, 1);
@@ -26,7 +26,7 @@ void courseraGates()
          0,
          1,
 
-    model.train(X, y, 1, 1000);
+    model.train(X, y);
     model.print();
 
     float first, second;
@@ -61,7 +61,7 @@ void courseraDigits(char *path)
     const int outputSize = 10;
     const int numLayers = 3;
     std::vector<int> layerSizes = {inputSize, 25, outputSize};
-    NeuralNetworkModel model(numLayers, layerSizes);
+    NeuralNetworkModel model(numLayers, layerSizes, 10, 20, 0.01);
 
     // load and shuffle data
     std::ifstream dataFile;
@@ -100,7 +100,7 @@ void courseraDigits(char *path)
         }
     }
 
-    model.train(XTrain, yTrain, 10, 20, 0.01);
+    model.train(XTrain, yTrain);
 
     int numCorrect = 0;
     for (int i = 0; i < numRows - numTrain; ++i) {
