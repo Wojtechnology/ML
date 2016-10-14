@@ -5,4 +5,4 @@ Naive machine learning algorithm implementations in c++.
 - Linear Regression
 - Logistic Regression (Binary and Multiclass)
 - Neural Network
-- SVM (in progress)
+- SVM

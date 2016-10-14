@@ -31,12 +31,12 @@ private:
     int predict_(const Eigen::VectorXf &x) const override;
 
     float kernel_(const Eigen::MatrixXf &x, int i1, int i2) const;
-    float learnedFunc(const Eigen::MatrixXf &x, int k) const;
+    float errorRate_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y) const;
+    float learnedFunc_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y, int k) const;
 
     // SMO implementation
-    int examineExample_(const Eigen::MatrixXf &x, int i1);
-    int takeStep_(const Eigen::MatrixXf &x, int i1, int i2);
-
+    int examineExample_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y, int i1);
+    int takeStep_(const Eigen::MatrixXf &x, const Eigen::VectorXi &y, int i1, int i2);
 
     // User options
     float c_;
@@ -46,8 +46,8 @@ private:
 
     // Internal options
     Eigen::VectorXf alpha_;
-    Eigen::VectorXf error_cache_;
-    Eigen::VectorXf dot_prod_cache_;
+    Eigen::VectorXf errorCache_;
+    Eigen::VectorXf dotProdCache_;
     Eigen::VectorXf w_;
     float b_;
     float deltaB_;
