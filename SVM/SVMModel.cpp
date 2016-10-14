@@ -7,8 +7,8 @@
 
 // Arguments:
 //     n -- Number of input features.
-//     c -- Idk lol.
-//     epsilon -- Idk lol.
+//     c -- Coefficient of penalizing term
+//     epsilon -- Slack values
 //     ker -- Type of kernel to use (linear or gaussian only for now).
 //     sigma -- Sigma value for gaussian filter.
 SVMModel::SVMModel(
